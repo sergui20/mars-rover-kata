@@ -1,0 +1,94 @@
+body {
+    background-color: #fafafa;
+}
+
+.grid-container {
+    margin: 0 auto;
+    padding: 30px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.grid {
+    display: inline-block;
+    width: 550px;
+    height: auto;
+    background-color: white;
+}
+
+#north, #south, #east, #west {
+    position: absolute;
+    font-weight: bold;
+    font-size: 25px;
+    z-index: 1;
+}
+
+#north {
+    left: 49.2%;
+}
+
+#south {
+    left: 49.5%;
+    top: 618px;
+}
+
+#west {
+    top: 46.5%;
+    left: 27%;
+}
+
+#east {
+    top: 46.5%;
+    left: 71%;
+}
+
+.matrix-elements {
+    width: 50px;
+    height: 50px;
+    background-color: #385185;
+    z-index: 1;
+    display: inline-block;
+    margin: auto;
+    position: relative;
+}
+
+.center-elements {
+    margin: 2.5px 2.5px;
+}
+
+.robot1 {
+    position: absolute;
+    font-size: 50px;
+    color: wheat;
+}
+
+.robot2 {
+    position: absolute;
+    font-size: 50px;
+    color: grey;
+}
+
+.robot3 {
+    position: absolute;
+    font-size: 50px;
+    color: darkcyan;
+}
+
+.south-direction {
+    transform: rotateZ(180deg);
+}
+
+.east-direction {
+    transform: rotateZ(90deg);
+}
+
+.west-direction {
+    transform: rotateZ(-90deg);
+}
+
+.obstacle {
+    background-color: white;
+    border: 10px solid black;
+    box-sizing: border-box;
+}

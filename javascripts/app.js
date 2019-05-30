@@ -1,42 +1,8 @@
 // Rover Object Goes Here
 // ======================
+
 // let keys = {'N': 70, 'E': 82, 'W': 76, 'S': 66};
 const grid = document.getElementById('grid');
-
-let rover = {
-  direction: 'N'
-}
-
-let robot1, robot2, robot3;
-
-let robot1X = randomMatrixElement();
-let robot1Y = randomMatrixElement();
-
-let robot2X = randomMatrixElement();
-let robot2Y = randomMatrixElement();
-
-let robot3X = randomMatrixElement();
-let robot3Y = randomMatrixElement();
-
-document.addEventListener('keydown', (ev) => {
-  switch(ev.keyCode) {
-    case 70:
-      moveForward('N');
-    break;
-    case 66:
-      moveBackward('S');
-    break;
-    case 82:
-      turnRight('E');
-    break;
-    case 76:
-      turnLeft('W');
-    break;
-    default:
-      console.log('Invalid key pressed')
-    break;
-  }
-})
 
 let matrix = [
   [null, null, null, null, null, null, null, null, null, null],
@@ -51,126 +17,326 @@ let matrix = [
   [null, null, null, null, null, null, null, null, null, null]
 ]
 
+let robot1 = {
+  _id: 1,
+  direction: 'N',
+  active: true,
+  coords: randomCoords('robot'),
+  img: null
+}
+
+let robot2 = {
+  _id: 2,
+  direction: 'N',
+  active: false,
+  coords: randomCoords('robot'),
+  img: null
+}
+
+let robot3 = {
+  _id: 3,
+  direction: 'N',
+  active: false,
+  coords: randomCoords('robot'),
+  img: null
+}
+
+let obstacle1 = {
+  _id: 1,
+  coords: randomCoords('obstacle'),
+}
+
+let obstacle2 = {
+  _id: 2,
+  coords: randomCoords('obstacle'),
+}
+
+let obstacle3 = {
+  _id: 3,
+  coords: randomCoords('obstacle'),
+}
+
+let obstacle4 = {
+  _id: 4,
+  coords: randomCoords('obstacle'),
+}
+
+document.addEventListener('keyup', (ev) => {
+  if (!ev.ctrlKey) { // When refreshing the browser with ctrl + r the robot directions won't be affected
+    switch(ev.keyCode) {
+      case 70:
+        if (robot1.active) {
+          moveForward(robot1);
+          robot1.active = false;
+          robot2.active = true;
+          return
+  
+        } else if (robot2.active) {
+          moveForward(robot2);
+          robot2.active = false;
+          robot3.active = true;
+          return
+  
+        } else if (robot3.active) {
+          moveForward(robot3)
+          robot3.active = false;
+          robot1.active = true;
+          return
+        }
+      break;
+      case 66:
+        if (robot1.active) {
+          moveBackward(robot1);
+          robot1.active = false;
+          robot2.active = true;
+          return
+  
+        } else if (robot2.active) {
+          moveBackward(robot2);
+          robot2.active = false;
+          robot3.active = true;
+          return
+  
+        } else if (robot3.active) {
+          moveBackward(robot3)
+          robot3.active = false;
+          robot1.active = true;
+          return
+        }
+      break;
+      case 82:
+        if (robot1.active) {
+          turnRight(robot1);
+          return
+  
+        } else if (robot2.active) {
+          turnRight(robot2);
+          return
+  
+        } else if (robot3.active) {
+          turnRight(robot3)
+          return
+        }
+      break;
+      case 76:
+        if (robot1.active) {
+          turnLeft(robot1);
+          return
+  
+        } else if (robot2.active) {
+          turnLeft(robot2);
+          return
+  
+        } else if (robot3.active) {
+          turnLeft(robot3)
+          return
+        }
+      break;
+      default:
+        console.log('Invalid key pressed')
+      break;
+    }
+  }
+})
+
 function initializeGame() {
   for (let i = 0; i < matrix.length; i++) {
     for(let j = 0; j < matrix[i].length; j++) {
-      const div = document.createElement('div');
-      renderMatrix(div, i, j)
+      renderMatrix(i, j)
     }
   }
 
-  createRobot(robot1, robot1X, robot1Y, 1);
-  createRobot(robot2, robot2X, robot2Y, 2);
-  createRobot(robot3, robot3X, robot3Y, 3);
+  createObstacles(obstacle1);
+  createObstacles(obstacle2);
+  createObstacles(obstacle3);
+  createObstacles(obstacle4);
+
+  createRobot(robot1);
+  createRobot(robot2);
+  createRobot(robot3);
 }
 
-function moveForward(){
-  switch(rover.direction) {
+function moveForward(robot){
+  switch(robot.direction) {
     case 'N':
-      if (robot1X !== 0) {
-        robot1X = robot1X - 1;
-        renderRobot(robot1X, robot1Y);
+      if (robot.coords.x !== 0) {
+        if (matrix[robot.coords.x - 1][robot.coords.y] === null) {
+          matrix[robot.coords.x - 1][robot.coords.y] = "robot";
+          matrix[robot.coords.x][robot.coords.y] = null
+
+          robot.coords.x = robot.coords.x - 1;
+          renderRobot(robot);
+        } else if(matrix[robot.coords.x - 1][robot.coords.y] === 'robot') {
+          M.toast({html: `Robot ${robot._id} has a friend in front !`})
+        } else if (matrix[robot.coords.x - 1][robot.coords.y] === 'obstacle') {
+          M.toast({html: `Watch out Robot ${robot._id} ! There is an obstacle !`})
+        }
       }
     break;
     case 'E':
-      if (robot1Y !== 9) {
-        robot1Y = robot1Y + 1;
-        renderRobot(robot1X, robot1Y)
+      if (robot.coords.y !== 9) {
+        if (matrix[robot.coords.x][robot.coords.y + 1] === null) {
+          matrix[robot.coords.x][robot.coords.y + 1] = "robot";
+          matrix[robot.coords.x][robot.coords.y] = null
+
+          robot.coords.y = robot.coords.y + 1;
+          renderRobot(robot)
+        } else if(matrix[robot.coords.x][robot.coords.y + 1] === 'robot') {
+          M.toast({html: `Robot ${robot._id} has a friend in front !`})
+        } else if (matrix[robot.coords.x][robot.coords.y + 1] === 'obstacle') {
+          M.toast({html: `Watch out Robot ${robot._id} ! There is an obstacle !`})
+        }
       }
     break;
     case 'W':
-      if (robot1Y !== 0) {
-        robot1Y = robot1Y - 1;
-        renderRobot(robot1X, robot1Y)
+      if (robot.coords.y !== 0) {
+        if (matrix[robot.coords.x][robot.coords.y - 1] === null) {
+          matrix[robot.coords.x][robot.coords.y - 1] = "robot";
+          matrix[robot.coords.x][robot.coords.y] = null
+
+          robot.coords.y = robot.coords.y - 1;
+          renderRobot(robot)
+        } else if(matrix[robot.coords.x][robot.coords.y - 1] === 'robot') {
+          M.toast({html: `Robot ${robot._id} has a friend in front !`})
+        } else if (matrix[robot.coords.x][robot.coords.y - 1] === 'obstacle') {
+          M.toast({html: `Watch out Robot ${robot._id} ! There is an obstacle !`})
+        }
       }
     break;
     case 'S':
-      if (robot1X !== 9) {
-        robot1X = robot1X + 1;
-        renderRobot(robot1X, robot1Y);
+      if (robot.coords.x !== 9) {
+        if (matrix[robot.coords.x + 1][robot.coords.y] === null) {
+          matrix[robot.coords.x + 1][robot.coords.y] = "robot";
+          matrix[robot.coords.x][robot.coords.y] = null
+
+          robot.coords.x = robot.coords.x + 1;
+          renderRobot(robot)
+        } else if(matrix[robot.coords.x + 1][robot.coords.y] === 'robot') {
+          M.toast({html: `Robot ${robot._id} has a friend in front !`})
+        } else if (matrix[robot.coords.x + 1][robot.coords.y] === 'obstacle') {
+          M.toast({html: `Watch out Robot ${robot._id} ! There is an obstacle !`})
+        }
       }
     break;  
   }
 }
 
-function moveBackward() {
-  switch(rover.direction) {
+function moveBackward(robot) {
+  switch(robot.direction) {
     case 'N':
-      if (robot1X !== 9) {
-        robot1X = robot1X + 1;
-        renderRobot(robot1X, robot1Y)
+      if (robot.coords.x !== 9) {
+        if (matrix[robot.coords.x + 1][robot.coords.y] === null) {
+          matrix[robot.coords.x + 1][robot.coords.y] = "robot";
+          matrix[robot.coords.x][robot.coords.y] = null
+
+          robot.coords.x = robot.coords.x + 1;
+          renderRobot(robot);
+        } else if(matrix[robot.coords.x + 1][robot.coords.y] === 'robot') {
+          M.toast({html: `Robot ${robot._id} has a friend in front !`})
+        } else if (matrix[robot.coords.x + 1][robot.coords.y] === 'obstacle') {
+          M.toast({html: `Watch out Robot ${robot._id} ! There is an obstacle !`})
+        }
       }
     break;
     case 'E':
-      if (robot1Y !== 0) {
-        robot1Y = robot1Y - 1;
-        renderRobot(robot1X, robot1Y)
+      if (robot.coords.y !== 0) {
+        if (matrix[robot.coords.x][robot.coords.y - 1] === null) {
+          matrix[robot.coords.x][robot.coords.y - 1] = "robot";
+          matrix[robot.coords.x][robot.coords.y] = null
+
+          robot.coords.y = robot.coords.y - 1;
+          renderRobot(robot);
+        } else if(matrix[robot.coords.x][robot.coords.y - 1] === 'robot') {
+          M.toast({html: `Robot ${robot._id} has a friend in front !`})
+        } else if (matrix[robot.coords.x][robot.coords.y - 1] === 'obstacle') {
+          M.toast({html: `Watch out Robot ${robot._id} ! There is an obstacle !`})
+        }
       }
     break;
     case 'W':
-      if (robot1Y !== 9) {
-        robot1Y = robot1Y + 1;
-        renderRobot(robot1X, robot1Y)
+      if (robot.coords.y !== 9) {
+        if (matrix[robot.coords.x][robot.coords.y + 1] === null) {
+          matrix[robot.coords.x][robot.coords.y + 1] = "robot";
+          matrix[robot.coords.x][robot.coords.y] = null
+
+          robot.coords.y = robot.coords.y + 1;
+          renderRobot(robot);
+        } else if(matrix[robot.coords.x][robot.coords.y + 1] === 'robot') {
+          M.toast({html: `Robot ${robot._id} has a friend in front !`})
+        } else if (matrix[robot.coords.x][robot.coords.y + 1] === 'obstacle') {
+          M.toast({html: `Watch out Robot ${robot._id} ! There is an obstacle !`})
+        }
       }
     break;
     case 'S':
-      if (robot1X !== 0) {
-        robot1X = robot1X - 1;
-        renderRobot(robot1X, robot1Y);
+      if (robot.coords.x !== 0) {
+        if (matrix[robot.coords.x - 1][robot.coords.y] === null) {
+          matrix[robot.coords.x - 1][robot.coords.y] = "robot";
+          matrix[robot.coords.x][robot.coords.y] = null
+
+          robot.coords.x = robot.coords.x - 1;
+          renderRobot(robot);
+        } else if(matrix[robot.coords.x - 1][robot.coords.y] === 'robot') {
+          M.toast({html: `Robot ${robot._id} has a friend in front !`})
+        } else if (matrix[robot.coords.x - 1][robot.coords.y] === 'obstacle') {
+          M.toast({html: `Watch out Robot ${robot._id} ! There is an obstacle !`})
+        }
       }
     break;  
   }
 }
 
-function turnRight() {
-  switch(rover.direction) {
+function turnRight(robot) {
+  switch(robot.direction) {
     case 'N':
-      rover.direction = 'E';
-      removeRobotClasses();
-      robot1.classList.add("east-direction");
+      robot.direction = 'E';
+      removeRobotClasses(robot);
+      robot.img.classList.add("east-direction");
     break;
     case 'E':
-      rover.direction = 'S';
-      removeRobotClasses();
-      robot1.classList.add("south-direction");
+      robot.direction = 'S';
+      removeRobotClasses(robot);
+      robot.img.classList.add("south-direction");
     break;
     case 'S':
-      rover.direction = 'W';
-      removeRobotClasses();
-      robot1.classList.add("west-direction");
+      robot.direction = 'W';
+      removeRobotClasses(robot);
+      robot.img.classList.add("west-direction");
       break;  
     case 'W':
-      rover.direction = 'N';
-      removeRobotClasses();
+      robot.direction = 'N';
+      removeRobotClasses(robot);
     break;
   }
 }
 
-function turnLeft() {
-  switch(rover.direction) {
+function turnLeft(robot) {
+  switch(robot.direction) {
     case 'N':
-      rover.direction = 'W';
-      removeRobotClasses();
-      robot1.classList.add("west-direction");
+      robot.direction = 'W';
+      removeRobotClasses(robot);
+      robot.img.classList.add("west-direction");
     break;
     case 'S':
-      rover.direction = 'E';
-      removeRobotClasses();
-      robot1.classList.add("east-direction");
+      robot.direction = 'E';
+      removeRobotClasses(robot);
+      robot.img.classList.add("east-direction");
     break;  
     case 'W':
-      rover.direction = 'S';
-      removeRobotClasses();
-      robot1.classList.add("south-direction");
+      robot.direction = 'S';
+      removeRobotClasses(robot);
+      robot.img.classList.add("south-direction");
       break;
     case 'E':
-      rover.direction = 'N';
-      removeRobotClasses();
+      robot.direction = 'N';
+      removeRobotClasses(robot);
     break;
   }  
 }
 
-function renderMatrix (div, i, j) {
+function renderMatrix (i, j) {
+  const div = document.createElement('div');
+
   div.classList.add("matrix-elements");
   div.classList.add("center-elements");
   div.id = `${i},${j}`;
@@ -178,33 +344,57 @@ function renderMatrix (div, i, j) {
   grid.appendChild(div)
 }
 
-function renderRobot(x, y) {
-  const div = document.getElementById(`${x},${y}`)
-  robot1 = document.getElementById("robot1");
+function renderRobot(robot) {
+  const div = document.getElementById(`${robot.coords.x},${robot.coords.y}`)
+  robot.img = document.getElementById(`robot${robot._id}`);
 
-  div.appendChild(robot1)
+  div.appendChild(robot.img);
 }
 
-function randomMatrixElement() {
-  return Math.floor(Math.random() * 10)
+function randomCoords(el) {
+  let x = Math.floor(Math.random() * 10);
+  let y = Math.floor(Math.random() * 10);
+
+  while(matrix[x][y] !== null) { // so that the elements have different coordinates always
+    console.log("Aja")
+    x = Math.floor(Math.random() * 10);
+    y = Math.floor(Math.random() * 10);
+  }
+
+  matrix[x][y] = el
+  return {
+    x,
+    y
+  }
 }
 
-function removeRobotClasses() {
-  robot1.classList.remove("south-direction");
-  robot1.classList.remove("west-direction");
-  robot1.classList.remove("east-direction");
+function removeRobotClasses(robot) {
+  robot.img.classList.remove("south-direction");
+  robot.img.classList.remove("west-direction");
+  robot.img.classList.remove("east-direction");
 }
 
-function createRobot(robot, x, y, num) {
-  const div = document.getElementById(`${x},${y}`);
+function createRobot(robot) {
+  const div = document.getElementById(`${robot.coords.x},${robot.coords.y}`);
     
-  robot = document.createElement("i");
-  robot.classList.add("fas");
-  robot.classList.add("fa-chevron-circle-up");
-  robot.classList.add(`robot${num}`);
-  robot.id = `robot${num}`;
+  robot.img = document.createElement("i");
+  robot.img.classList.add("fas");
+  robot.img.classList.add("fa-chevron-circle-up");
+  robot.img.classList.add(`robot${robot._id}`);
+  robot.img.id = `robot${robot._id}`;
 
-  div.appendChild(robot);
+  div.appendChild(robot.img);
 }
+
+function createObstacles(obstacle) {
+  const {x, y} = obstacle.coords
+
+  const div = document.getElementById(`${x},${y}`);
+  div.classList.add("obstacle");
+
+  // matrix[x][y] = `obstacle${obstacle._id}`
+}
+
+console.log(matrix);
 
 initializeGame();

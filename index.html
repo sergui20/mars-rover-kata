@@ -3,113 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <title>Mars Rover</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
-  <style>
-    .container {
-      margin: 0 auto;
-      padding: 30px;
-      position: relative;
-    }
-
-    .grid {
-      display: inline-block;
-      width: 550px;
-      height: 550px;
-      background-color: white;
-      padding: 2.5px;
-    }
-
-    #north, #south, #east, #west {
-      position: absolute;
-      font-weight: bold;
-      font-size: 25px;
-      z-index: 1;
-    }
-
-    #north {
-      left: 270px;
-    }
-
-    #south {
-      left: 270px;
-      top: 543px;
-    }
-
-    #west {
-      top: 270px;
-    }
-
-    #east {
-      top: 270px;
-      right: 667px;
-    }
-
-    #rover-instructions {
-      display: inline-block;
-      position: absolute;
-      margin-left: 40px;
-    }
-
-    .matrix-elements {
-      width: 50px;
-      height: 50px;
-      background-color: #385185;
-      z-index: 1;
-      display: inline-block;
-      margin: auto;
-      position: relative;
-    }
-
-    .center-elements {
-      margin: 2.5px 2.5px;
-    }
-
-    .robot1 {
-      position: absolute;
-      font-size: 50px;
-      color: wheat;
-    }
-
-    .robot2 {
-      position: absolute;
-      font-size: 50px;
-      color: grey;
-    }
-
-    .robot3 {
-      position: absolute;
-      font-size: 50px;
-      color: darkcyan;
-    }
-
-    .south-direction {
-      transform: rotateZ(180deg);
-    }
-
-    .east-direction {
-      transform: rotateZ(90deg);
-    }
-
-    .west-direction {
-      transform: rotateZ(-90deg);
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="styles.css"></link>
 </head>
 <body>
   <span id="north">N</span>
   <span id="south">S</span>
   <span id="east">E</span>
   <span id="west">W</span>
-  <div class="container">
+  <div class="grid-container">
 
     <div id="grid" class="grid"></div>
 
-    <div id="rover-instructions">
-      <p>Rover Direction: </p>
-      <p>Previous Command</p>
-      <p>Next Command</p>
-    </div>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="javascripts/app.js"></script>
 </body>
 </html>
